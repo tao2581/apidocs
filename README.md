@@ -1,9 +1,10 @@
 
+## forked from f2m2/apidocs, add dingo/api support 
+
+
 # Laravel API Docs Generator
 
 This Laravel package provides an API Documentation generator based upon your Routes and Controller Method DocBlock comments.
-
-forked from f2m2/apidocs, add dingo/api support
 
 ## Installation
 
