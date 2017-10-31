@@ -18,6 +18,5 @@
         "psr-4": {
             "F2m2\\Apidocs\\": "src/"
         }
-    },
-    "minimum-stability": "stable"
+    }
 }
