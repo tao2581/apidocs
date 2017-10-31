@@ -3,8 +3,8 @@
 use Illuminate\Filesystem\Filesystem;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Routing\Route;
-use Illuminate\Routing\Router;
+use Dingo\Api\Routing\Route;
+use Dingo\Api\Routing\Router;
 use Illuminate\Http\Request;
 use phpDocumentor\Reflection\DocBlock;
 use ReflectionClass;
@@ -60,7 +60,6 @@ class ApiDocsGenerator {
         $this->dotPrefix = str_replace('/', '.', $this->prefix);
 
         $this->routes = $this->getRoutes();
-
         if (count($this->routes) == 0) {
             return;
         }
@@ -82,11 +81,9 @@ class ApiDocsGenerator {
     protected function getEndpoints(){
 
         $endpoints = [];
-
         foreach ($this->routes as $route) {
             $array = explode("@", $route['action']);
             $class = $array[0];
-
             if ($class == "Closure") {
 
                 // check for api/v1/docs
@@ -106,6 +103,7 @@ class ApiDocsGenerator {
             $endpoints["${class}"]['description'] = $docBlock->getShortDescription();
 
         }
+
         return $this->getEndpointMethods($endpoints);
     }
 
@@ -132,7 +130,6 @@ class ApiDocsGenerator {
 
             $reflector = new ReflectionClass($class);
             $docBlock = new DocBlock($reflector->getMethod($methodName));
-            $controllerDocBlock = new DocBlock($reflector);
 
             $endpointNameCamelCase= $this->convertToSnakeCase($endpointName);
             $endpointNameCamelCasePlural = $this->convertToSnakeCase($endpointName) . 's';
@@ -144,7 +141,6 @@ class ApiDocsGenerator {
 
             $route['function'] = $methodName;
             $route['docBlock'] = $docBlock;
-            $route['controllerDocBlock'] = $controllerDocBlock;
 
             array_push($endpoints["${endpointName}"]['methods'], $route);
         }
@@ -155,11 +151,11 @@ class ApiDocsGenerator {
 
 
     /**
-    * Returns the path for the view based upon View Type
-    *
-    * @param  $viewType
-    * @return array
-    */
+     * Returns the path for the view based upon View Type
+     *
+     * @param  $viewType
+     * @return array
+     */
 
     protected  function viewPathForType($viewType){
 
@@ -174,11 +170,11 @@ class ApiDocsGenerator {
     }
 
     /**
-    * Generates the HTML Code from the templates and saves them
-    *
-    * @param  $endpoints
-    * @return void
-    */
+     * Generates the HTML Code from the templates and saves them
+     *
+     * @param  $endpoints
+     * @return void
+     */
 
     protected function generateHTMLCode($endpoints)
     {
@@ -209,17 +205,17 @@ class ApiDocsGenerator {
         $content = $this->createContentForTemplate($endpoints);
 
 
-       // Save the default layout
-       $this->updateAndSaveDefaultLayoutTemplate($content);
+        // Save the default layout
+        $this->updateAndSaveDefaultLayoutTemplate($content);
 
     }
 
     /**
-    * Copies template type from filepath to target
-    *
-    * @param  string $type, string $filepath
-    * @return void
-    */
+     * Copies template type from filepath to target
+     *
+     * @param  string $type, string $filepath
+     * @return void
+     */
 
     protected function copyAndSaveTemplate($type, $filepath)
     {
@@ -228,11 +224,11 @@ class ApiDocsGenerator {
     }
 
     /**
-    *  Retrieves the content from the template and saves it to a new file
-    *
-    * @param  string $type, string $filepath
-    * @return void
-    */
+     *  Retrieves the content from the template and saves it to a new file
+     *
+     * @param  string $type, string $filepath
+     * @return void
+     */
 
     protected function updatePrefixAndSaveTemplate($type, $filepath)
     {
@@ -247,11 +243,11 @@ class ApiDocsGenerator {
     }
 
     /**
-    *  Saves the default layout with HTML content
-    *
-    * @param  string $content
-    * @return void
-    */
+     *  Saves the default layout with HTML content
+     *
+     * @param  string $content
+     * @return void
+     */
 
     protected function updateAndSaveDefaultLayoutTemplate($content){
 
@@ -271,11 +267,11 @@ class ApiDocsGenerator {
     }
 
     /**
-    *  Generates the directory structure for the API documentation
-    *
-    * @param  string $content
-    * @return void
-    */
+     *  Generates the directory structure for the API documentation
+     *
+     * @param  string $content
+     * @return void
+     */
 
     protected function generateDirectoryStructure()
     {
@@ -299,12 +295,12 @@ class ApiDocsGenerator {
     }
 
     /**
-    *  Generates the assets directory
-    *  by copying the files from the template directory to a public diretory
-    *
-    * @param  string $content
-    * @return void
-    */
+     *  Generates the assets directory
+     *  by copying the files from the template directory to a public diretory
+     *
+     * @param  string $content
+     * @return void
+     */
 
     private function generateAssetsDirectory()
     {
@@ -314,29 +310,29 @@ class ApiDocsGenerator {
         // create assets directory
         File::makeDirectory($destinationPath, $mode = 0777, true, true);
 
-         $targetPath = Config::get('apidocs.assets_path');
-         $directories = ['css', 'img', 'js'];
+        $targetPath = Config::get('apidocs.assets_path');
+        $directories = ['css', 'img', 'js'];
 
-         foreach ($directories as $directory)
-         {
+        foreach ($directories as $directory)
+        {
             $target = $targetPath . '/' . $directory;
             $dest = $destinationPath . '/' . $directory;
             File::copyDirectory($target, $dest);
-         }
+        }
 
     }
 
     /**
-    *  Generates the content for the templates
-    *
-    * @param  array $endpoints
-    * @return void
-    */
+     *  Generates the content for the templates
+     *
+     * @param  array $endpoints
+     * @return void
+     */
 
-     private function createContentForTemplate($endpoints = array())
-     {
+    private function createContentForTemplate($endpoints = array())
+    {
 
-       if(!$endpoints) return FALSE;
+        if(!$endpoints) return FALSE;
 
         $navigation     = '';
         $body           = '';
@@ -380,11 +376,7 @@ class ApiDocsGenerator {
                     $sectionItem = str_replace('{function}', $endpoint['function'], $sectionItem);
                     $sectionItem = str_replace('{request-uri}',  end($uri),  $sectionItem);
 
-                    $method_params =  $endpoint['docBlock']->getTagsByName('param');
-                    $controller_params =  $endpoint['controllerDocBlock']->getTagsByName('param');
-
-                    $params = array_merge($method_params, $controller_params);
-
+                    $params =  $endpoint['docBlock']->getTagsByName('param');
                     $parameters = '';
 
                     foreach ($params as $param)
@@ -480,9 +472,14 @@ class ApiDocsGenerator {
     {
         $results = array();
 
-        foreach ($this->routes as $route)
+        foreach ($this->routes as $collection)
         {
-            $results[] = $this->getRouteInformation($route);
+            foreach ($collection->getRoutes() as $route) {
+
+                if (key_exists('uses', $route->getAction())) {
+                    $results[] = $this->getRouteInformation($route);
+                }
+            }
         }
 
         return array_filter($results);
@@ -494,8 +491,6 @@ class ApiDocsGenerator {
      * @param  \Illuminate\Routing\Route  $route
      * @return string
      */
-    
-    /*
     protected function getBeforeFilters($route)
     {
         $before = array_keys($route->beforeFilters());
@@ -504,7 +499,6 @@ class ApiDocsGenerator {
 
         return implode(', ', $before);
     }
-    */
 
     /**
      * Get all of the pattern filters matching the route.
@@ -532,23 +526,23 @@ class ApiDocsGenerator {
     /**
      * Get the route information for a given route.
      *
-     * @param  string  $name
-     * @param  \Illuminate\Routing\Route  $route
+     * @param  Route  $route
      * @return array
      */
     protected function getRouteInformation(Route $route)
     {
 
-        $uri = implode('|', $route->methods()).' '.$route->uri();
+        $uri = implode('|', $route->methods()).' '.preg_replace('/^\//', '', $route->uri());
 
+        $routeAction = $route->getAction();
         return $this->filterRoute(array(
             'host'   => $route->domain(),
             'uri'    => $uri,
             'name'   => $route->getName(),
-            'action' => $route->getActionName(),
-            // 'before' => $this->getBeforeFilters($route),
-            // 'after'  => $this->getAfterFilters($route),
-            'prefix' => $route->getPrefix(),
+            'action' => key_exists('uses', $routeAction) ? $routeAction['uses'] : null,
+            'before' => '',
+            'after'  => '',
+            'prefix' => 'api/' . $route->versions()[0],
             'method' => $route->methods()[0],
         ));
     }
@@ -569,7 +563,7 @@ class ApiDocsGenerator {
         return $route;
     }
 
-        /**
+    /**
      * Get the pattern filters for a given URI and method.
      *
      * @param  string  $uri
@@ -587,28 +581,26 @@ class ApiDocsGenerator {
      * @param  \Illuminate\Routing\Route  $route
      * @return string
      */
-    /*
     protected function getAfterFilters($route)
     {
         return implode(', ', array_keys($route->afterFilters()));
     }
-    */
 
     /**
-    * Converts a CamelCase String to Snake Case
-    *
-    * @param  string $input
-    * @return string
-    */
+     * Converts a CamelCase String to Snake Case
+     *
+     * @param  string $input
+     * @return string
+     */
 
     private function convertToSnakeCase($input)
     {
-      preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
-      $ret = $matches[0];
-      foreach ($ret as &$match) {
-        $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
-      }
-      return implode('_', $ret);
+        preg_match_all('!([A-Z][A-Z0-9]*(?=$|[A-Z][a-z0-9])|[A-Za-z][a-z0-9]+)!', $input, $matches);
+        $ret = $matches[0];
+        foreach ($ret as &$match) {
+            $match = $match == strtoupper($match) ? strtolower($match) : lcfirst($match);
+        }
+        return implode('_', $ret);
     }
 
 }
