@@ -3,6 +3,8 @@
 
 This Laravel package provides an API Documentation generator based upon your Routes and Controller Method DocBlock comments.
 
+forked from f2m2/apidocs, add dingo/api support
+
 ## Installation
 
 #### Laravel 5.0
@@ -10,7 +12,7 @@ This Laravel package provides an API Documentation generator based upon your Rou
 Begin by installing this package through Composer. Edit your project's `composer.json` file to require `f2m2/apidocs`.
 
     "require-dev": {
-        "f2m2/apidocs": "dev-master"
+        "tao2581/apidocs": "dev-master"
     }
 
 Next, update Composer from the Terminal:
